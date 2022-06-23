@@ -10,7 +10,7 @@ OBJS = $(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) -pthread $(OBJS) -o $(NAME)
 
 clean:
 	rm -f ./*.o
