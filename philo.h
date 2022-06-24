@@ -5,6 +5,7 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <string.h>
 # include <pthread.h>
 # include <sys/time.h>
 
@@ -30,5 +31,6 @@ int		ft_atoi(char *s);
 int		check_args(int argc, char **argv);
 int		loop(t_timeval start, t_timeval now, double time_to, int die);
 double	gettime(struct timeval start, struct timeval now);
+int		eat(t_thread_info *info, int to_lock);
 
 #endif

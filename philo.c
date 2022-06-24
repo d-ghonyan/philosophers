@@ -12,21 +12,39 @@
 
 #include "philo.h"
 
+// pthread_mutex_t *mutexes;
+
 void	*start_routine(void *arg)
 {
 	t_thread_info	*info;
 	t_timeval		start;
 	t_timeval		now;
 
+	int barev = 0;
 	info = arg;
-	gettimeofday(&start, NULL);
-	gettimeofday(&now, NULL);
-	while (1)
-	{
-		if (loop(start, now, info->to_eat, info->to_die) < 0)
-			return (NULL);
-	}
-	printf(RED "IM DEAD" RESET);
+	//pthread_mutex_lock(info->mutexes);
+	printf("Thread %d is ", info->num);
+	eat(info, 1);
+
+	barev += 15;
+	//printf("%d\n", barev);
+	// while (1)
+	// {
+	// 	eat(info, 1);
+	// 	printf("LOCKED\n");
+	printf("HJELLOOOOA[PDASD] %d\n", info->num);
+	// 	if (loop(start, now, info->to_eat, info->to_die))
+	// 		return (NULL);
+	// 	printf("BACK FROM LOOP");
+	// 	eat(info, 0);
+	// 	printf("UNLOCKED\n");
+	// }
+	//eat(info);
+	//printf(RED "IM DEAD" RESET);
+	//pthread_mutex_unlock((info->mutexes));
+	printf("Thread %d is ", info->num);
+	//eat(info, 0);
+	eat(info, 0);
 	return (NULL);
 }
 
@@ -58,7 +76,7 @@ int	main(int argc, char **argv)
 	threads = malloc(sizeof (*threads) * size);
 	mutexes = malloc(sizeof (*mutexes) * size);
 	if (!threads || !mutexes)
-		return ((-1));
+		return (-1);
 	i = 0;
 	while (i < size)
 	{
@@ -68,8 +86,9 @@ int	main(int argc, char **argv)
 	i = 0;
 	while (i < size)
 	{
-		init_thread(&(threads[i]), argc, argv, mutexes);
+		init_thread(&(threads[i]), argc, argv, NULL);
 		threads[i].num = i + 1;
+		threads[i].mutexes = mutexes;
 		pthread_create(&(threads[i].id), NULL, &start_routine, &(threads[i]));
 		i++;
 	}
@@ -77,6 +96,12 @@ int	main(int argc, char **argv)
 	while (i < size)
 	{
 		pthread_join((threads[i].id), NULL);
+		i++;
+	}
+	i = 0;
+	while (i < size)
+	{
+		pthread_mutex_destroy(mutexes + i);
 		i++;
 	}
 }
