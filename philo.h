@@ -11,7 +11,7 @@
 
 # include "colors.h"
 
-typedef struct s_thread_info {
+typedef struct thread_info {
 	int				num;
 	int				thread_count;
 	int				to_eat;
@@ -22,7 +22,7 @@ typedef struct s_thread_info {
 	time_t			time;
 	pthread_t		id;
 	pthread_mutex_t	mutex;
-	pthread_mutex_t	*mutexes;
+	pthread_mutex_t	mutexes[2];
 }	t_thread_info;
 
 typedef struct timeval	t_timeval;
@@ -30,7 +30,8 @@ typedef struct timeval	t_timeval;
 int		ft_atoi(char *s);
 int		check_args(int argc, char **argv);
 int		loop(t_timeval start, t_timeval now, double time_to, int die);
-double	gettime(struct timeval start, struct timeval now);
 int		eat(t_thread_info *info, int to_lock);
+double	gettime(struct timeval start, struct timeval now);
+void	mutex_init(pthread_mutex_t *m, pthread_mutex_t (*mutexes)                                                                                                                                                                                             [2], int count, int n);
 
 #endif

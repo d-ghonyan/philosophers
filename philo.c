@@ -12,8 +12,6 @@
 
 #include "philo.h"
 
-// pthread_mutex_t *mutexes;
-
 void	*start_routine(void *arg)
 {
 	t_thread_info	*info;
@@ -51,7 +49,7 @@ void	*start_routine(void *arg)
 void	init_thread(t_thread_info *thread, int argc,
 	char **argv, pthread_mutex_t *m)
 {
-	thread->mutexes = m;
+	// thread->mutexes = m;
 	thread->thread_count = ft_atoi(argv[1]);
 	thread->to_die = ft_atoi(argv[2]);
 	thread->to_eat = ft_atoi(argv[3]);
@@ -80,24 +78,30 @@ int	main(int argc, char **argv)
 	i = 0;
 	while (i < size)
 	{
-		pthread_mutex_init(&(mutexes[i]), NULL);
+		pthread_mutex_init(mutexes + i, NULL);
 		i++;
 	}
 	i = 0;
 	while (i < size)
 	{
-		init_thread(&(threads[i]), argc, argv, NULL);
-		threads[i].num = i + 1;
-		threads[i].mutexes = mutexes;
-		pthread_create(&(threads[i].id), NULL, &start_routine, &(threads[i]));
+		mutex_init(mutexes, &(threads[i].mutexes), size, i);
 		i++;
 	}
 	i = 0;
-	while (i < size)
-	{
-		pthread_join((threads[i].id), NULL);
-		i++;
-	}
+	// while (i < size)
+	// {
+	// 	init_thread(&(threads[i]), argc, argv, NULL);
+	// 	threads[i].num = i + 1;
+	// 	// threads[i].mutexes = mutexes;
+	// 	pthread_create(&(threads[i].id), NULL, &start_routine, &(threads[i]));
+	// 	i++;
+	// }
+	// i = 0;
+	// while (i < size)
+	// {
+	// 	pthread_join((threads[i].id), NULL);
+	// 	i++;
+	// }
 	i = 0;
 	while (i < size)
 	{

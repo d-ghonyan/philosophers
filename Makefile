@@ -13,7 +13,7 @@ $(NAME): $(OBJS)
 	$(CC) -pthread $(OBJS) -o $(NAME)
 
 clean:
-	rm -f ./*.o
+	rm -f *.o
 
 fclean: clean
 	rm -f $(NAME)
