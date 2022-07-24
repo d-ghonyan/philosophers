@@ -12,11 +12,11 @@
 
 #include "philo.h"
 
-void	mutex_init(pthread_mutex_t *m, pthread_mutex_t (*mutexes)[2], int count, int n)
+void	mutex_init(t_mutex *m, t_mutex *(*mutexes)[2], int count, int n)
 {
-	*(mutexes[1]) = m[n];
+	*(mutexes[1]) = m + n;
 	if (n)
-		*(mutexes[0]) = m[n - 1];
+		*(mutexes[0]) = m + (n - 1);
 	else
-		*(mutexes[0]) = m[count - 1];
+		*(mutexes[0]) = m + (count - 1);
 }

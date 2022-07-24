@@ -46,18 +46,25 @@ void	*start_routine(void *arg)
 	return (NULL);
 }
 
-void	init_thread(t_thread_info *thread, int argc,
+void	init_thread(t_thread_info *threads, int argc,
 	char **argv, pthread_mutex_t *m)
 {
-	// thread->mutexes = m;
-	thread->thread_count = ft_atoi(argv[1]);
-	thread->to_die = ft_atoi(argv[2]);
-	thread->to_eat = ft_atoi(argv[3]);
-	thread->to_sleep = ft_atoi(argv[4]);
-	thread->must_eat = -1;
-	thread->eat_count = 0;
-	if (argc == 6)
-		thread->must_eat = ft_atoi(argv[5]);
+	int	i;
+
+	i = 0;
+	while (i < ft_atoi(argv[1]))
+	{
+		mutex_init(m, &(threads[i].mutexes), ft_atoi(argv[1]), i);
+		threads[i].thread_count = ft_atoi(argv[1]);
+		threads[i].to_die = ft_atoi(argv[2]);
+		threads[i].to_eat = ft_atoi(argv[3]);
+		threads[i].to_sleep = ft_atoi(argv[4]);
+		threads[i].must_eat = -1;
+		threads[i].eat_count = 0;
+		if (argc == 6)
+			threads[i].must_eat = ft_atoi(argv[5]);
+		i++;
+	}
 }
 
 int	main(int argc, char **argv)
@@ -65,7 +72,7 @@ int	main(int argc, char **argv)
 	int				size;
 	int				i;
 	t_thread_info	*threads;
-	pthread_mutex_t	*mutexes;
+	t_mutex			*mutexes;
 
 	if (check_args(argc, argv) < 0)
 		return (1);
@@ -74,19 +81,19 @@ int	main(int argc, char **argv)
 	threads = malloc(sizeof (*threads) * size);
 	mutexes = malloc(sizeof (*mutexes) * size);
 	if (!threads || !mutexes)
+	{
+		free(threads);
+		free(mutexes);
 		return (-1);
+	}
 	i = 0;
 	while (i < size)
 	{
 		pthread_mutex_init(mutexes + i, NULL);
 		i++;
 	}
-	i = 0;
-	while (i < size)
-	{
-		mutex_init(mutexes, &(threads[i].mutexes), size, i);
-		i++;
-	}
+	init_thread(threads, argc, argv, mutexes);
+	pthread_mutex_lock(threads[0].mutexes[0]);
 	i = 0;
 	// while (i < size)
 	// {
