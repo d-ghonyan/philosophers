@@ -18,32 +18,23 @@ void	*start_routine(void *arg)
 	t_timeval		start;
 	t_timeval		now;
 
-	int barev = 0;
-	info = arg;
-	//pthread_mutex_lock(info->mutexes);
-	printf("Thread %d is ", info->num);
-	eat(info, 1);
+	info = (t_thread_info *)arg;
+	pthread_mutex_lock(info->mutexes[0]);
+	pthread_mutex_lock(info->mutexes[1]);
 
-	barev += 15;
-	//printf("%d\n", barev);
-	// while (1)
-	// {
-	// 	eat(info, 1);
-	// 	printf("LOCKED\n");
-	printf("HJELLOOOOA[PDASD] %d\n", info->num);
-	// 	if (loop(start, now, info->to_eat, info->to_die))
-	// 		return (NULL);
-	// 	printf("BACK FROM LOOP");
-	// 	eat(info, 0);
-	// 	printf("UNLOCKED\n");
-	// }
-	//eat(info);
-	//printf(RED "IM DEAD" RESET);
-	//pthread_mutex_unlock((info->mutexes));
-	printf("Thread %d is ", info->num);
-	//eat(info, 0);
-	eat(info, 0);
-	return (NULL);
+	gettimeofday(&start, NULL);
+
+	while (1)
+	{
+		printf("%d %d %d\n", now.tv_sec, start.tv_sec, info->num);
+		gettimeofday(&now, NULL);
+		if (now.tv_sec - start.tv_sec >= 5)
+			break ;
+	}
+
+	pthread_mutex_unlock(info->mutexes[1]);
+	pthread_mutex_unlock(info->mutexes[0]);
+	printf("unlocked%d\n", info->num);
 }
 
 void	init_thread(t_thread_info *threads, int argc,
@@ -54,7 +45,16 @@ void	init_thread(t_thread_info *threads, int argc,
 	i = 0;
 	while (i < ft_atoi(argv[1]))
 	{
+		if (pthread_mutex_init(m + i, NULL) < 0)
+			printf("AAAAAAAH");
+		i++;
+	}
+	i = 0;
+	while (i < ft_atoi(argv[1]))
+	{
 		mutex_init(m, &(threads[i].mutexes), ft_atoi(argv[1]), i);
+		threads[i].m = m;
+		threads[i].num = i;
 		threads[i].thread_count = ft_atoi(argv[1]);
 		threads[i].to_die = ft_atoi(argv[2]);
 		threads[i].to_eat = ft_atoi(argv[3]);
@@ -75,7 +75,7 @@ int	main(int argc, char **argv)
 	t_mutex			*mutexes;
 
 	if (check_args(argc, argv) < 0)
-		return (1);
+		return (-1);
 	i = 0;
 	size = ft_atoi(argv[1]);
 	threads = malloc(sizeof (*threads) * size);
@@ -86,33 +86,24 @@ int	main(int argc, char **argv)
 		free(mutexes);
 		return (-1);
 	}
+	init_thread(threads, argc, argv, mutexes);
 	i = 0;
 	while (i < size)
 	{
-		pthread_mutex_init(mutexes + i, NULL);
+		pthread_create((&(threads + i)->id), NULL, &start_routine, threads + i);
 		i++;
 	}
-	init_thread(threads, argc, argv, mutexes);
-	pthread_mutex_lock(threads[0].mutexes[0]);
 	i = 0;
-	// while (i < size)
-	// {
-	// 	init_thread(&(threads[i]), argc, argv, NULL);
-	// 	threads[i].num = i + 1;
-	// 	// threads[i].mutexes = mutexes;
-	// 	pthread_create(&(threads[i].id), NULL, &start_routine, &(threads[i]));
-	// 	i++;
-	// }
+	while (i < size)
+	{
+
+		pthread_join(((threads + i)->id), NULL);
+		i++;
+	}
 	// i = 0;
 	// while (i < size)
 	// {
-	// 	pthread_join((threads[i].id), NULL);
+	// 	pthread_mutex_destroy(mutexes + i);
 	// 	i++;
 	// }
-	i = 0;
-	while (i < size)
-	{
-		pthread_mutex_destroy(mutexes + i);
-		i++;
-	}
 }

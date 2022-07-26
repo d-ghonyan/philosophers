@@ -21,7 +21,7 @@ typedef struct thread_info {
 	int				eat_count;
 	time_t			time;
 	pthread_t		id;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	*m;
 	pthread_mutex_t	*(mutexes)[2];
 }	t_thread_info;
 
