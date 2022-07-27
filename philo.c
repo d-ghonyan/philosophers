@@ -21,12 +21,28 @@ void	*start_routine(void *arg)
 	info = (t_thread_info *)arg;
 	gettimeofday(&start, NULL);
 	info->start = start;
+	info->last_meal = start;
 	while (1)
 	{
-		if (eat(info))
+		eat(info);
+		if (info->dead)
+		{
+			printf("RETURN ");
 			return (NULL);
+		}
 		_sleep(info);
+		if (info->dead)
+		{
+			printf("RETURN ");
+			return (NULL);
+		}
 		think(info);
+		if (info->dead)
+		{
+			printf("RETURN ");
+			return (NULL);
+		}
+		info->first = 0;
 	}
 }
 
@@ -44,6 +60,8 @@ void	init_thread(t_thread_info *threads, int argc,
 	{
 		mutex_init(m, &(threads[i].mutexes), ft_atoi(argv[1]), i);
 		threads[i].m = m;
+		threads[i].dead = 0;
+		threads[i].first = 1;
 		threads[i].num = i;
 		threads[i].thread_count = ft_atoi(argv[1]);
 		threads[i].to_die = ft_atoi(argv[2]);
@@ -92,7 +110,7 @@ int	main(int argc, char **argv)
 		if (!hello)
 		{
 			printf("DEAD\n");
-			return (1);
+			exit (1);
 		}
 	}
 	i = 0;
