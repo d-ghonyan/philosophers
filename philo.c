@@ -37,11 +37,8 @@ void	init_thread(t_thread_info *threads, int argc,
 
 	i = 0;
 	while (i < ft_atoi(argv[1]))
-	{
-		if (pthread_mutex_init(m + i, NULL) < 0)
+		if (pthread_mutex_init(m + i++, NULL) < 0)
 			printf("AAAAAAAH");
-		i++;
-	}
 	i = 0;
 	while (i < ft_atoi(argv[1]))
 	{
@@ -75,6 +72,7 @@ int	main(int argc, char **argv)
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
 
+	hello = NULL;
 	if (check_args(argc, argv) < 0)
 		return (-1);
 	i = 0;

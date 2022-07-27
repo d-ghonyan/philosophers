@@ -12,9 +12,6 @@
 
 #include "philo.h"
 
-int	lock(int f, int s, pthread_mutex_t *mutexes);
-int	unlock(int f, int s, pthread_mutex_t *mutexes);
-
 int	eat(t_thread_info *info)
 {
 	int			dead;
