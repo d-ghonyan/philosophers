@@ -15,65 +15,60 @@
 int	lock(int f, int s, pthread_mutex_t *mutexes);
 int	unlock(int f, int s, pthread_mutex_t *mutexes);
 
-int	eat(t_thread_info *info, int to_lock)
+int	eat(t_thread_info *info)
 {
-	int	r_fork;
-	int	l_fork;
+	int			dead;
+	t_timeval	now;
+	t_timeval	start;
 
-	if (info->thread_count <= 2)
-		return (-1);
-	r_fork = info->num - 1;
-	l_fork = info->num + 1;
-	if (info->num == 1)
-		r_fork = info->thread_count;
-	else if (info->num == info->thread_count)
-		l_fork = 1;
-	if (to_lock)
-		return (lock(r_fork, l_fork, info->mutexes));
-	else
-		return (unlock(r_fork, l_fork, info->mutexes));
+	dead = 0;
+	pthread_mutex_lock(info->mutexes[0]);
+	pthread_mutex_lock(info->mutexes[1]);
+	gettimeofday(&now, NULL);
+	gettimeofday(&start, NULL);
+	printf("%.3f : Philosopher %d has taken a fork\n",
+		gettime(info->start, now), info->num);
+	printf("%.3f : Philosopher %d is eating\n",
+		gettime(info->start, now), info->num);
+	while (1)
+	{
+		gettimeofday(&now, NULL);
+		if (gettime(start, now) >= info->to_eat)
+			break ;
+		if (gettime(start, now) >= info->to_die)
+		{
+			printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
+			dead = 1;
+			break ;
+		}
+	}
+	pthread_mutex_unlock(info->mutexes[1]);
+	pthread_mutex_unlock(info->mutexes[0]);
+	return (dead);
 }
 
-int	lock(int f, int s, pthread_mutex_t *mutexes)
+void	_sleep(t_thread_info *info)
 {
-	int a = 0;
-	int	b = 0;
-	a = f;
-	b = s;
-	if (f > s)
+	t_timeval	now;
+	t_timeval	start;
+
+	gettimeofday(&now, NULL);
+	printf("%.3f : Philosopher %d is sleeping\n",
+		gettime(info->start, now), info->num);
+	gettimeofday(&start, NULL);
+	while (1)
 	{
-		a = s;
-		b = f;
+		gettimeofday(&now, NULL);
+		if (gettime(start, now) >= info->to_sleep)
+			break ;
 	}
-	printf("LOCKING %d %d\n", a, b);
-	pthread_mutex_lock(mutexes + a);
-	pthread_mutex_lock(mutexes + b);
-	// if (a = pthread_mutex_lock(mutexes + f))
-	// 	printf("UNLOCK 1%s\n", strerror (a));
-	// if (a = pthread_mutex_lock(mutexes + s))
-	// 	printf("UNLOCK 1%s\n", strerror (a));
-	// return (0);
 }
 
-int	unlock(int f, int s, pthread_mutex_t *mutexes)
+void	think(t_thread_info *info)
 {
-	int a = 0;
-	int	b = 0;
-	a = f;
-	b = s;
-	if (f > s)
-	{
-		a = s;
-		b = f;
-	}
-	printf("UNLOCKING %d %d\n", a, b);
-	pthread_mutex_unlock(mutexes + a);
-	pthread_mutex_unlock(mutexes + b);
-	// printf("UNLOCKING %d %d\n", f, s);
-	// if (a = pthread_mutex_unlock(mutexes + f))
-	// 	printf("UNLOCK 1%s\n", strerror (a));
-	// if (a = pthread_mutex_unlock(mutexes + s))
-	// 	printf("UNLOCK 2%s\n", strerror (a));
-	// return (pthread_mutex_unlock(mutexes + f) || pthread_mutex_unlock(mutexes + s));
-	return (0);
+	t_timeval	now;
+
+	gettimeofday(&now, NULL);
+	printf("%.3f : Philosopher %d is thinking\n",
+		gettime(info->start, now), info->num);
 }

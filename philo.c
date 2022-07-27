@@ -19,22 +19,15 @@ void	*start_routine(void *arg)
 	t_timeval		now;
 
 	info = (t_thread_info *)arg;
-	pthread_mutex_lock(info->mutexes[0]);
-	pthread_mutex_lock(info->mutexes[1]);
-
 	gettimeofday(&start, NULL);
-
+	info->start = start;
 	while (1)
 	{
-		printf("%d %d %d\n", now.tv_sec, start.tv_sec, info->num);
-		gettimeofday(&now, NULL);
-		if (now.tv_sec - start.tv_sec >= 5)
-			break ;
+		if (eat(info))
+			return (NULL);
+		_sleep(info);
+		think(info);
 	}
-
-	pthread_mutex_unlock(info->mutexes[1]);
-	pthread_mutex_unlock(info->mutexes[0]);
-	printf("unlocked%d\n", info->num);
 }
 
 void	init_thread(t_thread_info *threads, int argc,
@@ -67,10 +60,18 @@ void	init_thread(t_thread_info *threads, int argc,
 	}
 }
 
+int	err(t_thread_info *threads, t_mutex *m)
+{
+	free(threads);
+	free(m);
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	int				size;
 	int				i;
+	void			*hello;
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
 
@@ -81,29 +82,22 @@ int	main(int argc, char **argv)
 	threads = malloc(sizeof (*threads) * size);
 	mutexes = malloc(sizeof (*mutexes) * size);
 	if (!threads || !mutexes)
-	{
-		free(threads);
-		free(mutexes);
-		return (-1);
-	}
+		return (err(threads, mutexes));
 	init_thread(threads, argc, argv, mutexes);
-	i = 0;
-	while (i < size)
-	{
+	i = -1;
+	while (++i < size)
 		pthread_create((&(threads + i)->id), NULL, &start_routine, threads + i);
-		i++;
-	}
 	i = 0;
 	while (i < size)
 	{
-
-		pthread_join(((threads + i)->id), NULL);
-		i++;
+		pthread_join(((threads + i++)->id), hello);
+		if (!hello)
+		{
+			printf("DEAD\n");
+			return (1);
+		}
 	}
-	// i = 0;
-	// while (i < size)
-	// {
-	// 	pthread_mutex_destroy(mutexes + i);
-	// 	i++;
-	// }
+	i = 0;
+	while (i < size)
+		pthread_mutex_destroy(mutexes + i++);
 }

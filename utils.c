@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
+/*   Updated: 2022/03/13 13:00:54 by dghonyan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	is_dead(double time, double time_to_die)
@@ -15,7 +27,7 @@ int	loop(t_timeval start, t_timeval now, double time_to, int die)
 {
 	double	a;
 
-	a = 0;//gettime(start, now);
+	a = 0;
 	gettimeofday(&start, NULL);
 	gettimeofday(&now, NULL);
 	while (gettime(start, now) < time_to)
