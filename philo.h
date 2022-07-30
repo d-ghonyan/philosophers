@@ -51,6 +51,7 @@ int		errors(t_thread_info *threads, t_mutex *mutexes, int i);
 void	eat(t_thread_info *info);
 void	_sleep(t_thread_info *info);
 void	think(t_thread_info *info);
+void	still_norm(t_thread_info *threads, t_mutex *mutexes, int size, int i);
 void	mutex_init(t_mutex *m, t_mutex *(*mutexes)[2], int count, int n);
 void	forks(t_thread_info *threads, t_timeval now, int i);
 double	gettime(struct timeval start, struct timeval now);

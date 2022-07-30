@@ -93,11 +93,7 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 			if (threads[i].ready
 				&& gettime(threads[i].last_meal, now) >= threads[i].to_die)
 			{
-				printf("%.3f : Philosopher %d is DĘÃD\n",
-					gettime((threads + i)->start, now), (threads + i)->num);
-				for (int j = 0; j < size; j++)
-					pthread_detach(threads[j].id);
-				errors(threads, mutexes, size);
+				still_norm(threads, mutexes, size, i);
 				return (0);
 			}
 			if (threads[i].eat_count == threads[i].must_eat)
@@ -114,11 +110,6 @@ int	main(int argc, char **argv)
 	int				i;
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
-
-	// pthread_mutex_init(&mutexes, NULL);
-	// printf("%d\n", pthread_mutex_destroy(&mutexes));
-	
-	// pthread_mutex_destroy(&mutexes);
 
 	if (check_args(argc, argv) < 0)
 		return (-1);
