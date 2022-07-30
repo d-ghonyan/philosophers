@@ -95,14 +95,15 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 			{
 				printf("%.3f : Philosopher %d is DĘÃD\n",
 					gettime((threads + i)->start, now), (threads + i)->num);
-				free(mutexes);
-				// errors(threads, mutexes, size);
-				// return (1);
+				for (int j = 0; j < size; j++)
+					pthread_detach(threads[j].id);
+				errors(threads, mutexes, size);
+				return (0);
 			}
 			if (threads[i].eat_count == threads[i].must_eat)
 			{
 				errors(threads, mutexes, size);
-				// return (0);
+				return (0);
 			}
 		}
 	}
@@ -114,9 +115,13 @@ int	main(int argc, char **argv)
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
 
+	// pthread_mutex_init(&mutexes, NULL);
+	// printf("%d\n", pthread_mutex_destroy(&mutexes));
+	
+	// pthread_mutex_destroy(&mutexes);
+
 	if (check_args(argc, argv) < 0)
 		return (-1);
-	i = 0;
 	if (ft_atoi(argv[1]) > 1)
 	{
 		threads = malloc(sizeof (*threads) * ft_atoi(argv[1]));
