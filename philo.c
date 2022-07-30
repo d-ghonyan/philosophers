@@ -12,37 +12,38 @@
 
 #include "philo.h"
 
-void	*start_routine(void *arg)
+void	*start_routine(void *info)
 {
-	t_thread_info	*info;
+	// ((t_thread_info	*)info);
 	t_timeval		start;
 	t_timeval		now;
 
-	info = (t_thread_info *)arg;
+	// info = (t_thread_info *)arg;
+	printf("I LIVE");
 	gettimeofday(&start, NULL);
-	info->start = start;
-	info->last_meal = start;
+	((t_thread_info	*)info)->start = start;
+	((t_thread_info	*)info)->last_meal = start;
 	while (1)
 	{
 		eat(info);
-		if (info->dead)
+		if (((t_thread_info	*)info)->dead)
 		{
-			printf("RETURN ");
+			printf("FUCK YOU\n");
 			return (NULL);
 		}
 		_sleep(info);
-		if (info->dead)
+		if (((t_thread_info	*)info)->dead)
 		{
-			printf("RETURN ");
+			printf("RETURN\n");
 			return (NULL);
 		}
 		think(info);
-		if (info->dead)
+		if (((t_thread_info	*)info)->dead)
 		{
-			printf("RETURN ");
+			printf("RETURN\n");
 			return (NULL);
 		}
-		info->first = 0;
+		((t_thread_info	*)info)->first = 0;
 	}
 }
 
@@ -86,11 +87,11 @@ int	main(int argc, char **argv)
 {
 	int				size;
 	int				i;
-	void			*hello;
+	// void			*hello;
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
 
-	hello = NULL;
+	// hello = NULL;
 	if (check_args(argc, argv) < 0)
 		return (-1);
 	i = 0;
@@ -103,17 +104,34 @@ int	main(int argc, char **argv)
 	i = -1;
 	while (++i < size)
 		pthread_create((&(threads + i)->id), NULL, &start_routine, threads + i);
-	i = 0;
-	while (i < size)
+	i = -1;
+	t_timeval	now;
+	while (1)
 	{
-		pthread_join(((threads + i++)->id), hello);
-		if (!hello)
+		printf("%ld\n", threads[0].last_meal.tv_sec);
+		gettimeofday(&now, NULL);
+		if (i >= size)
+			i = -1;
+		while (++i < size)
 		{
-			printf("DEAD\n");
-			exit (1);
+			if (gettime(threads[i].last_meal, now) >= threads[i].to_die)
+			{
+				printf("FUCK All of this\n");
+				return (0);
+			}
 		}
 	}
-	i = 0;
-	while (i < size)
-		pthread_mutex_destroy(mutexes + i++);
 }
+
+// while (i < size)
+// {
+// 	pthread_join(((threads + i++)->id), hello);
+// 	if (!hello)
+// 	{
+// 		printf("DEAD\n");
+// 		break ;
+// 	}
+// }
+// i = 0;
+// while (i < size)
+// 	pthread_mutex_destroy(mutexes + i++);

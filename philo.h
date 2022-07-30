@@ -36,6 +36,7 @@ typedef struct thread_info {
 	int				to_sleep;
 	int				must_eat;
 	int				eat_count;
+	void			*arg;
 	time_t			time;
 	pthread_t		id;
 	t_timeval		start;
