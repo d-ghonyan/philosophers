@@ -12,67 +12,46 @@
 
 #include "philo.h"
 
-// gettimeofday(&now, NULL);
-// if (gettime(info->last_meal, now) >= info->to_die)
-// {
-// 	printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
-// 	info->dead = 1;
-// 	return ;
-// }
-// printf("%.3f : Philosopher %d has taken the first fork\n",
-// 	gettime(info->start, now), info->num);
+void	norm(t_timeval *now, t_timeval *start, t_timeval *meal)
+{
+	gettimeofday(meal, NULL);
+	gettimeofday(now, NULL);
+	gettimeofday(start, NULL);
+}
+
+int	norm_again(t_thread_info *info, t_timeval now)
+{
+	if (gettime(info->last_meal, now) >= info->to_die)
+	{
+		info->dead = 1;
+		return (1);
+	}
+	return (0);
+}
 
 void	eat(t_thread_info *info)
 {
 	t_timeval	now;
 	t_timeval	start;
 
-	if (gettime(info->last_meal, now) >= info->to_die)
-	{
-		printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
-		info->dead = 1;
-		return ;
-	}
 	pthread_mutex_lock(info->mutexes[0]);
-	if (gettime(info->last_meal, now) >= info->to_die)
-	{
-		printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
-		info->dead = 1;
-		return ;
-	}
+	info->rfork = 1;
 	pthread_mutex_lock(info->mutexes[1]);
-	gettimeofday(&now, NULL);
-	if (gettime(info->start, now) >= info->to_die && info->first)
-	{
-		printf("%.3f : Philosopher %d is DĘÃD\n",
-			gettime(info->start, now), info->num);
-		info->dead = 1;
-		return ;
-	}
-	if (gettime(info->last_meal, now) >= info->to_die)
-	{
-		printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
-		info->dead = 1;
-		return ;
-	}
-	gettimeofday(&start, NULL);
+	info->lfork = 1;
+	norm(&now, &start, &(info->last_meal));
 	printf("%.3f : Philosopher %d is eating\n",
 		gettime(info->start, now), info->num);
-	info->last_meal = now;
 	while (1)
 	{
 		gettimeofday(&now, NULL);
-		if (gettime(start, now) >= info->to_eat)
+		if (gettime(start, now) >= info->to_eat || norm_again(info, now))
 			break ;
-		if (gettime(info->last_meal, now) >= info->to_die)
-		{
-			printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
-			info->dead = 1;
-			break ;
-		}
 	}
 	pthread_mutex_unlock(info->mutexes[1]);
+	info->lfork = 0;
 	pthread_mutex_unlock(info->mutexes[0]);
+	info->rfork = 0;
+	info->eat_count += (info->must_eat != -1);
 }
 
 void	_sleep(t_thread_info *info)
@@ -91,7 +70,6 @@ void	_sleep(t_thread_info *info)
 			break ;
 		if (gettime(info->last_meal, now) >= info->to_die)
 		{
-			printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
 			info->dead = 1;
 			break ;
 		}
@@ -105,9 +83,4 @@ void	think(t_thread_info *info)
 	gettimeofday(&now, NULL);
 	printf("%.3f : Philosopher %d is thinking\n",
 		gettime(info->start, now), info->num);
-	if (gettime(info->last_meal, now) >= info->to_die)
-	{
-		printf("%.3f : Philosopher %d is DĘÃD\n", gettime(info->start, now), info->num);
-		info->dead = 1;
-	}
 }

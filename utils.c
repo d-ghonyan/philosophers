@@ -12,30 +12,36 @@
 
 #include "philo.h"
 
-int	is_dead(double time, double time_to_die)
-{
-	return (time >= time_to_die);
-}
-
 double	gettime(t_timeval start, t_timeval now)
 {
 	return ((double)((now.tv_sec - start.tv_sec) * 1000)
 		+ ((double)(now.tv_usec - start.tv_usec) / 1000));
 }
 
-int	loop(t_timeval start, t_timeval now, double time_to, int die)
+int	errors(t_thread_info *threads, t_mutex *mutexes, int i)
 {
-	double	a;
+	int	j;
 
-	a = 0;
-	gettimeofday(&start, NULL);
-	gettimeofday(&now, NULL);
-	while (gettime(start, now) < time_to)
+	j = -1;
+	while (++j < i)
+		pthread_mutex_destroy(mutexes + j);
+	free(threads);
+	free(mutexes);
+	return (1);
+}
+
+void	forks(t_thread_info *threads, t_timeval now, int i)
+{
+	if (threads[i].rfork)
 	{
-		gettimeofday(&now, NULL);
-		a = gettime(start, now);
-		if (is_dead(gettime(start, now), die))
-			return (1);
+		(threads + i)->rfork = 0;
+		printf("%.3f : Philosopher %d has taken a fork\n",
+			gettime((threads + i)->start, now), threads[i].num);
 	}
-	return (is_dead(a, die));
+	else if (threads[i].lfork)
+	{
+		(threads + i)->lfork = 0;
+		printf("%.3f : Philosopher %d has taken a fork\n",
+			gettime((threads + i)->start, now), threads[i].num);
+	}
 }
