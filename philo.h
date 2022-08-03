@@ -48,6 +48,7 @@ typedef struct thread_info {
 int		ft_atoi(char *s);
 int		check_args(int argc, char **argv);
 int		errors(t_thread_info *threads, t_mutex *mutexes, int i);
+int		check_eat(t_thread_info *threads, int size);
 void	eat(t_thread_info *info);
 void	_sleep(t_thread_info *info);
 void	think(t_thread_info *info);

@@ -57,5 +57,16 @@ void	still_norm(t_thread_info *threads, t_mutex *mutexes, int size, int i)
 		gettime((threads + i)->start, now), (threads + i)->num);
 	while (++j < size)
 		pthread_detach(threads[j].id);
-	errors(threads, mutexes, size);
+	// errors(threads, mutexes, size);
+}
+
+int	check_eat(t_thread_info *threads, int size)
+{
+	int	i;
+
+	i = -1;
+	while (++i < size)
+		if (threads[i].eat_count != threads[i].must_eat)
+			return (0);
+	return (1);
 }

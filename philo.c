@@ -24,19 +24,14 @@ void	*start_routine(void *arg)
 	info->ready = 1;
 	while (1)
 	{
-		if (info->must_eat < 0 || info->eat_count != info->must_eat)
-		{
-			eat(info);
-			if (info->dead)
-				return (NULL);
-			_sleep(info);
-			if (info->dead)
-				return (NULL);
-			think(info);
-			if (info->dead)
-				return (NULL);
-		}
-		else if (info->eat_count != info->must_eat)
+		eat(info);
+		if (info->dead)
+			return (NULL);
+		_sleep(info);
+		if (info->dead)
+			return (NULL);
+		think(info);
+		if (info->dead)
 			return (NULL);
 	}
 }
@@ -93,12 +88,14 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 			if (threads[i].ready
 				&& gettime(threads[i].last_meal, now) >= threads[i].to_die)
 			{
-				still_norm(threads, mutexes, size, i);
+				printf("%.3f : Philosopher %d is DĘÃD\n",
+					gettime((threads + i)->start, now), (threads + i)->num);
+				// still_norm(threads, mutexes, size, i);
 				return (0);
 			}
-			if (threads[i].eat_count == threads[i].must_eat)
+			if (check_eat(threads, size))
 			{
-				errors(threads, mutexes, size);
+				// errors(threads, mutexes, size);
 				return (0);
 			}
 		}
