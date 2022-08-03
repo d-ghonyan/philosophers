@@ -37,11 +37,11 @@ typedef struct thread_info {
 	int				to_sleep;
 	int				must_eat;
 	int				eat_count;
+	int				*one_dead;
 	time_t			time;
 	pthread_t		id;
 	t_timeval		start;
 	t_timeval		last_meal;
-	pthread_mutex_t	*m;
 	pthread_mutex_t	*(mutexes)[2];
 }	t_thread_info;
 

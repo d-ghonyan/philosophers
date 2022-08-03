@@ -24,6 +24,7 @@ int	norm_again(t_thread_info *info, t_timeval now)
 	if (gettime(info->last_meal, now) >= info->to_die)
 	{
 		info->dead = 1;
+		*(info->one_dead) = 1;
 		return (1);
 	}
 	return (0);
@@ -34,19 +35,20 @@ void	eat(t_thread_info *info)
 	t_timeval	now;
 	t_timeval	start;
 
+	if (*(info->one_dead))
+		return ;
 	pthread_mutex_lock(info->mutexes[0]);
 	info->rfork = 1;
 	pthread_mutex_lock(info->mutexes[1]);
 	info->lfork = 1;
+	if (*(info->one_dead))
+		return ;
 	norm(&now, &start, &(info->last_meal));
 	printf("%.3f : Philosopher %d is eating\n",
 		gettime(info->start, now), info->num);
-	while (1)
-	{
+	while (gettime(start, now) < info->to_eat
+		&& !norm_again(info, now) && !(*(info->one_dead)))
 		gettimeofday(&now, NULL);
-		if (gettime(start, now) >= info->to_eat || norm_again(info, now))
-			break ;
-	}
 	pthread_mutex_unlock(info->mutexes[1]);
 	info->lfork = 0;
 	pthread_mutex_unlock(info->mutexes[0]);
@@ -66,11 +68,12 @@ void	_sleep(t_thread_info *info)
 	while (1)
 	{
 		gettimeofday(&now, NULL);
-		if (gettime(start, now) >= info->to_sleep)
+		if (gettime(start, now) >= info->to_sleep || (info->one_dead))
 			break ;
 		if (gettime(info->last_meal, now) >= info->to_die)
 		{
 			info->dead = 1;
+			*(info->one_dead) = 1;
 			break ;
 		}
 	}

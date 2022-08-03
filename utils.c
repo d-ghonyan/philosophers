@@ -48,14 +48,5 @@ void	forks(t_thread_info *threads, t_timeval now, int i)
 
 void	still_norm(t_thread_info *threads, t_mutex *mutexes, int size, int i)
 {
-	int			j;
-	t_timeval	now;
-
-	j = -1;
-	gettimeofday(&now, NULL);
-	printf("%.3f : Philosopher %d is DĘÃD\n",
-		gettime((threads + i)->start, now), (threads + i)->num);
-	while (++j < size)
-		pthread_detach(threads[j].id);
 	errors(threads, mutexes, size);
 }
