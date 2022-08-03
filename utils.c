@@ -50,3 +50,14 @@ void	still_norm(t_thread_info *threads, t_mutex *mutexes, int size, int i)
 {
 	errors(threads, mutexes, size);
 }
+
+int	check_eat(t_thread_info *threads, int size)
+{
+	int	i;
+
+	i = -1;
+	while (++i < size)
+		if (threads[i].eat_count != threads[i].must_eat)
+			return (0);
+	return (1);
+}
