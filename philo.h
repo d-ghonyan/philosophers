@@ -45,8 +45,10 @@ typedef struct thread_info {
 	pthread_mutex_t	*(mutexes)[2];
 }	t_thread_info;
 
+int		err(t_thread_info *threads, t_mutex *m);
 void	norm(t_timeval *now, t_timeval *start, t_timeval *meal);
 int		ft_strlen(char *s);
+int		init_thread(t_thread_info *threads, int argc, char **argv, t_mutex *m);
 int		ft_atoi(char *s);
 int		check_args(int argc, char **argv);
 int		errors(t_thread_info *threads, t_mutex *mutexes, int i);

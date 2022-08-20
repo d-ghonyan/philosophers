@@ -46,9 +46,11 @@ void	forks(t_thread_info *threads, t_timeval now, int i)
 	}
 }
 
-void	still_norm(t_thread_info *threads, t_mutex *mutexes, int size, int i)
+int	err(t_thread_info *threads, t_mutex *m)
 {
-	errors(threads, mutexes, size);
+	free(threads);
+	free(m);
+	return (1);
 }
 
 int	check_eat(t_thread_info *threads, int size)

@@ -12,35 +12,6 @@
 
 #include "philo.h"
 
-t_mutex g_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-void	eat(t_thread_info *info)
-{
-	t_timeval	now;
-	t_timeval	start;
-
-	if (*(info->one_dead))
-		return ;
-	pthread_mutex_lock(info->mutexes[0]);
-	info->rfork = 1;
-	pthread_mutex_lock(info->mutexes[1]);
-	info->lfork = 1;
-	norm(&now, &start, &(info->last_meal));
-	if (*(info->one_dead))
-		return ;
-	pthread_mutex_lock(&g_mutex);
-	printf("%.3f : Philosopher %d is eating\n",
-		gettime(info->start, now), info->num);
-	pthread_mutex_unlock(&g_mutex);
-	while (gettime(start, now) < info->to_eat && !(*(info->one_dead)))
-		gettimeofday(&now, NULL);
-	pthread_mutex_unlock(info->mutexes[1]);
-	info->lfork = 0;
-	pthread_mutex_unlock(info->mutexes[0]);
-	info->rfork = 0;
-	info->eat_count += (info->must_eat != -1);
-}
-
 void	*start_routine(void *arg)
 {
 	t_thread_info	*info;
@@ -68,42 +39,6 @@ void	*start_routine(void *arg)
 	}
 }
 
-int	init_thread(t_thread_info *threads, int argc, char **argv, t_mutex *m)
-{
-	int	i;
-
-	i = 0;
-	while (i < ft_atoi(argv[1]))
-		if (pthread_mutex_init(m + i++, NULL) < 0)
-			return (errors(threads, m, i));
-	i = -1;
-	while (++i < ft_atoi(argv[1]))
-	{
-		mutex_init(m, &(threads[i].mutexes), ft_atoi(argv[1]), i);
-		threads[i].one_dead = threads[0].one_dead;
-		threads[i].rfork = 0;
-		threads[i].lfork = 0;
-		threads[i].ready = 0;
-		threads[i].dead = 0;
-		threads[i].num = i;
-		threads[i].to_die = ft_atoi(argv[2]);
-		threads[i].to_eat = ft_atoi(argv[3]);
-		threads[i].to_sleep = ft_atoi(argv[4]);
-		threads[i].must_eat = -1;
-		threads[i].eat_count = 0;
-		if (argc == 6)
-			threads[i].must_eat = ft_atoi(argv[5]);
-	}
-	return (0);
-}
-
-int	err(t_thread_info *threads, t_mutex *m)
-{
-	free(threads);
-	free(m);
-	return (1);
-}
-
 int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 {
 	int			i;
@@ -117,29 +52,23 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 		while (++i < size)
 		{
 			gettimeofday(&now, NULL);
-			// forks(threads, now, i);
-			if (threads[i].ready
+			forks(threads, now, i);
+			if ((threads[i].ready
 				&& gettime(threads[i].last_meal, now) >= threads[i].to_die)
+				|| threads[i].eat_count == threads[i].must_eat)
 			{
 				gettimeofday(&now, NULL);
-				pthread_mutex_lock(&g_mutex);
-				printf("%.3f : Philosopher %d is DĘÃD\n",
-					gettime((threads + i)->start, now), (threads + i)->num);
-				pthread_mutex_unlock(&g_mutex);
+				if (threads[i].eat_count != threads[i].must_eat)
+				{
+					printf("%.3f : Philosopher %d is DĘÃD\n",
+						gettime((threads + i)->start, now), (threads + i)->num);
+				}
 				*(threads[i].one_dead) = 1;
 				while (++a < size)
 					pthread_join(threads[a].id, NULL);
-				still_norm(threads, mutexes, size, i);
+				errors(threads, mutexes, size);
 				return (1);
 			}
-			// if (threads[i].eat_count == threads[i].must_eat)
-			// {
-			// 	*(threads[i].one_dead) = 1;
-			// 	while (++a < size)
-			// 		pthread_join(threads[a].id, NULL);
-			// 	errors(threads, mutexes, size);
-			// 	return (1);
-			// }
 		}
 	}
 }
@@ -151,8 +80,6 @@ int	main(int argc, char **argv)
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
 
-
-	one_dead = 0;
 	if (check_args(argc, argv) < 0)
 		return (-1);
 	if (ft_atoi(argv[1]) > 1)
