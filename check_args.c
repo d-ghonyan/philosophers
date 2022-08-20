@@ -21,19 +21,19 @@ int	check_args(int argc, char **argv)
 	i = 1;
 	if (argc < 5 || argc > 6)
 	{
-		printf(RED "Wrong arguments" RESET);
+		printf(RED "Wrong arguments\n" RESET);
 		return (-1);
 	}
 	while (i < argc)
 	{
 		if (ft_atoi(argv[i]) < 0)
 		{
-			printf(RED "Arguments must be positive" RESET);
+			printf(BLUE "Arguments must be positive\n" RESET);
 			return (-1);
 		}
 		else if (!is_numeric(argv[i]))
 		{
-			printf(RED "Arguments must be numbers" RESET);
+			printf(MAGENTA "Arguments must be numbers\n" RESET);
 			return (-1);
 		}
 		i++;
