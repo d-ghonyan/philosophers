@@ -12,22 +12,27 @@
 
 #include "philo.h"
 
+void	ft_swap(int *a, int *b)
+{
+	int	c;
+
+	c = *a;
+	*a = *b;
+	*b = c;
+}
+
 void	mutex_init(t_mutex *m, t_mutex *(*mutexes)[2], int count, int n)
 {
-	if (n)
-	{
-		(*mutexes)[1] = m + n;
-		if (n)
-			(*mutexes)[0] = m + (n - 1);
-		else
-			(*mutexes)[0] = m + (count - 1);
-	}
+	int	first;
+	int	second;
+
+	first = 0;
+	second = 1;
+	if (n == count - 1)
+		ft_swap(&first, &second);
+	(*mutexes)[first] = m + n;
+	if (n == count -  1)
+		(*mutexes)[second] = m + 0;
 	else
-	{
-		(*mutexes)[0] = m + n;
-		if (n)
-			(*mutexes)[1] = m + (n - 1);
-		else
-			(*mutexes)[1] = m + (count - 1);
-	}
+		(*mutexes)[second] = m + n + 1;
 }

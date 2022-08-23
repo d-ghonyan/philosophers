@@ -13,6 +13,9 @@
 		"utility": "c",
 		"vector": "c",
 		"chrono": "c",
-		"compare": "c"
-	}
+		"compare": "c",
+		"philo.h": "c"
+	},
+	"editor.insertSpaces": false,
+	"workbench.panel.defaultLocation": "right"
 }

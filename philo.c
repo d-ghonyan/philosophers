@@ -52,7 +52,7 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 		while (++i < size)
 		{
 			gettimeofday(&now, NULL);
-			forks(threads, now, i);
+			// forks(threads, now, i);
 			if ((threads[i].ready
 				&& gettime(threads[i].last_meal, now) >= threads[i].to_die)
 				|| threads[i].eat_count == threads[i].must_eat)
@@ -67,7 +67,7 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 				while (++a < size)
 					pthread_join(threads[a].id, NULL);
 				errors(threads, mutexes, size);
-				return (1);
+			return (1);
 			}
 		}
 	}
@@ -98,5 +98,6 @@ int	main(int argc, char **argv)
 		if (loop(ft_atoi(argv[1]), threads, mutexes))
 			return (0);
 	}
-	printf("NO ONE EATS SPAGHETTI WITH ONE FORK\n");
+	else
+		printf("NO ONE EATS SPAGHETTI WITH ONE FORK\n");
 }

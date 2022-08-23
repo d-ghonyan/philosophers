@@ -37,10 +37,13 @@ void	eat(t_thread_info *info)
 
 	if (*(info->one_dead))
 		return ;
+	gettimeofday(&now, NULL);
 	pthread_mutex_lock(info->mutexes[0]);
-	info->rfork = 1;
+	printf("%.3f : Philosopher %d has taken right fork\n",
+			gettime(info->start, now), info->num);
 	pthread_mutex_lock(info->mutexes[1]);
-	info->lfork = 1;
+	printf("%.3f : Philosopher %d has taken left fork\n",
+			gettime(info->start, now), info->num);
 	norm(&now, &start, &(info->last_meal));
 	if (*(info->one_dead))
 		return ;

@@ -26,9 +26,9 @@ int	check_args(int argc, char **argv)
 	}
 	while (i < argc)
 	{
-		if (ft_atoi(argv[i]) < 0)
+		if (ft_atoi(argv[i]) <= 0)
 		{
-			printf(BLUE "Arguments must be positive\n" RESET);
+			printf(BLUE "Arguments must be > 0\n" RESET);
 			return (-1);
 		}
 		else if (!is_numeric(argv[i]))
