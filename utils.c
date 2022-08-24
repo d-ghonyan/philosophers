@@ -12,8 +12,11 @@
 
 #include "philo.h"
 
-double	gettime(t_timeval start, t_timeval now)
+double	gettime(t_timeval start)
 {
+	t_timeval	now;
+
+	gettimeofday(&now, NULL);
 	return ((double)((now.tv_sec - start.tv_sec) * 1000)
 		+ ((double)(now.tv_usec - start.tv_usec) / 1000));
 }
@@ -24,26 +27,13 @@ int	errors(t_thread_info *threads, t_mutex *mutexes, int i)
 
 	j = -1;
 	while (++j < i)
+	{
+		pthread_mutex_destroy(&(threads[j].print_mutex));
 		pthread_mutex_destroy(mutexes + j);
+	}
 	free(threads);
 	free(mutexes);
 	return (1);
-}
-
-void	forks(t_thread_info *threads, t_timeval now, int i)
-{
-	if (threads[i].rfork)
-	{
-		(threads + i)->rfork = 0;
-		printf("%.3f : Philosopher %d has taken a fork\n",
-			gettime((threads + i)->start, now), threads[i].num);
-	}
-	else if (threads[i].lfork)
-	{
-		(threads + i)->lfork = 0;
-		printf("%.3f : Philosopher %d has taken a fork\n",
-			gettime((threads + i)->start, now), threads[i].num);
-	}
 }
 
 int	err(t_thread_info *threads, t_mutex *m)
@@ -53,13 +43,13 @@ int	err(t_thread_info *threads, t_mutex *m)
 	return (1);
 }
 
-int	check_eat(t_thread_info *threads, int size)
+void	one_fork(int to_die)
 {
-	int	i;
+	t_timeval	start;
 
-	i = -1;
-	while (++i < size)
-		if (threads[i].eat_count != threads[i].must_eat)
-			return (0);
-	return (1);
+	gettimeofday(&start, NULL);
+	while (gettime(start) <= to_die)
+		;
+	printf("%.3f : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
+		gettime(start), 0);
 }

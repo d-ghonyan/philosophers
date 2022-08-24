@@ -31,7 +31,7 @@ void	mutex_init(t_mutex *m, t_mutex *(*mutexes)[2], int count, int n)
 	if (n == count - 1)
 		ft_swap(&first, &second);
 	(*mutexes)[first] = m + n;
-	if (n == count -  1)
+	if (n == count - 1)
 		(*mutexes)[second] = m + 0;
 	else
 		(*mutexes)[second] = m + n + 1;
