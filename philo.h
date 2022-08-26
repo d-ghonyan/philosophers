@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/03/13 13:00:54 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/08/26 15:29:21 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ typedef struct thread_info {
 }	t_thread_info;
 
 int		err(t_thread_info *threads, t_mutex *m);
-void	norm(t_timeval *now, t_timeval *start, t_timeval *meal);
 int		ft_strlen(char *s);
 int		init_thread(t_thread_info *threads, int argc, char **argv, t_mutex *m);
 int		ft_atoi(char *s);
