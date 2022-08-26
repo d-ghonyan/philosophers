@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/03/13 13:00:54 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/08/26 12:26:05 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	eat(t_thread_info *info)
 		gettime(info->start), info->num);
 	norm(&now, &start, &(info->last_meal));
 	pthread_mutex_lock(&(info->print_mutex));
-	printf("%.3f : Philosopher %d is eating\n",
+	printf("%.3f : Philosopher %d is \x1b[32meating\x1b[0m\n",
 		gettime(info->start), info->num);
 	pthread_mutex_unlock(&(info->print_mutex));
 	while (gettime(start) < info->to_eat)
@@ -49,7 +49,7 @@ void	_sleep(t_thread_info *info)
 	t_timeval	start;
 
 	gettimeofday(&now, NULL);
-	printf("%.3f : Philosopher %d is sleeping\n",
+	printf("%.3f : Philosopher %d is \x1b[34msleeping\x1b[0m\n",
 		gettime(info->start), info->num);
 	gettimeofday(&start, NULL);
 	while (1)
@@ -65,6 +65,6 @@ void	think(t_thread_info *info)
 	t_timeval	now;
 
 	gettimeofday(&now, NULL);
-	printf("%.3f : Philosopher %d is thinking\n",
+	printf("%.3f : Philosopher %d is \x1b[35mthinking\x1b[0m\n",
 		gettime(info->start), info->num);
 }
