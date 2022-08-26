@@ -6,7 +6,7 @@
 /*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/08/26 16:11:27 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/08/26 16:41:24 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	eat(t_thread_info *info)
 	pthread_mutex_lock(info->mutexes[0]);
 	gettimeofday(&now, NULL);
 	pthread_mutex_lock(info->mutexes[1]);
-	pthread_mutex_lock(&(info->print_mutex));
 	gettimeofday(&(info->last_meal), NULL);
+	pthread_mutex_lock(&(info->print_mutex));
 	printf("%.3f : %d has taken a fork\n",
 		another_gettime(info->start, now), info->num);
 	printf("%.3f : %d has taken a fork\n",
@@ -51,7 +51,6 @@ void	eat(t_thread_info *info)
 
 void	_sleep(t_thread_info *info)
 {
-	t_timeval	now;
 	t_timeval	start;
 
 	printf("%.3f : %d is sleeping\n",
