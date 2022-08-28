@@ -6,7 +6,7 @@
 /*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/08/26 15:24:02 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/08/28 16:53:23 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	*s(void *arg)
 
 	info = (t_thread_info *)arg;
 	gettimeofday(&(info->last_meal), NULL);
-	gettimeofday(&(info->start), NULL);
 	info->ready = 1;
 	while (1)
 	{
@@ -47,15 +46,21 @@ int	im_tired(t_thread_info *threads, int size)
 	return (1);
 }
 
-void	print(t_thread_info *threads, int i)
+int	print(t_thread_info *threads, int i)
 {
 	t_timeval	now;
 
 	gettimeofday(&now, NULL);
 	pthread_mutex_lock(&(threads[i].print_mutex));
+	if (gettime(threads[i].last_meal) <= threads[i].to_die)
+	{
+		pthread_mutex_unlock(&(threads[i].print_mutex));
+		return (1);
+	}
 	printf("%.3f : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
 		gettime((threads + i)->start), (threads + i)->num);
 	pthread_mutex_unlock(&(threads[i].print_mutex));
+	return (0);
 }
 
 int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
@@ -69,11 +74,14 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 		while (++i < size)
 		{
 			if ((threads[i].ready
-					&& gettime(threads[i].last_meal) >= threads[i].to_die)
+					&& gettime(threads[i].last_meal) > threads[i].to_die)
 				|| im_tired(threads, size))
 			{
 				if (!im_tired(threads, size))
-					print(threads, i);
+					if (print(threads, i))
+						continue ;
+				if (gettime(threads[i].last_meal) <= threads[i].to_die)
+					continue ;
 				a = -1;
 				while (++a < size)
 					pthread_detach(threads[a].id);
@@ -85,6 +93,7 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 
 int	main(int argc, char **argv)
 {
+	t_timeval		start;
 	int				i;
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
@@ -100,8 +109,12 @@ int	main(int argc, char **argv)
 		if (init_thread(threads, argc, argv, mutexes))
 			return (0);
 		i = -1;
+		gettimeofday(&start, NULL);
 		while (++i < ft_atoi(argv[1]))
+		{
+			threads[i].start = start;
 			pthread_create((&((threads + i)->id)), NULL, &s, threads + i);
+		}
 		return (loop(ft_atoi(argv[1]), threads, mutexes));
 	}
 	one_fork(ft_atoi(argv[2]));
