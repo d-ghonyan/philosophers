@@ -6,7 +6,7 @@
 /*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/08/28 16:53:23 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/08/28 17:03:40 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	*s(void *arg)
 
 	info = (t_thread_info *)arg;
 	gettimeofday(&(info->last_meal), NULL);
+	if (info->num % 2 == 0)
+		usleep(15000);
 	info->ready = 1;
 	while (1)
 	{
@@ -80,7 +82,8 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 				if (!im_tired(threads, size))
 					if (print(threads, i))
 						continue ;
-				if (gettime(threads[i].last_meal) <= threads[i].to_die)
+				if (gettime(threads[i].last_meal) <= threads[i].to_die
+					&& !im_tired(threads, size))
 					continue ;
 				a = -1;
 				while (++a < size)
