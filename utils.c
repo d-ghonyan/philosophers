@@ -12,18 +12,13 @@
 
 #include "philo.h"
 
-// void	_printf(int time, int num, char *action)
-// {
-	
-// }
-
 int	gettime(t_timeval start)
 {
 	t_timeval	now;
 
 	gettimeofday(&now, NULL);
-	return (int)((double)((now.tv_sec - start.tv_sec) * 1000)
-		+ ((double)(now.tv_usec - start.tv_usec) / 1000));
+	return ((int)((double)((now.tv_sec - start.tv_sec) * 1000)
+		+ ((double)(now.tv_usec - start.tv_usec) / 1000)));
 }
 
 int	errors(t_thread_info *threads, t_mutex *mutexes, int i)

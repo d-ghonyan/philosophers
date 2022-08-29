@@ -20,8 +20,8 @@ void	norm(t_timeval *start, t_timeval *meal)
 
 int	another_gettime(t_timeval start, t_timeval now)
 {
-	return (int)((double)((now.tv_sec - start.tv_sec) * 1000
-		+ ((double)(now.tv_usec - start.tv_usec) / 1000)));
+	return ((int)((double)((now.tv_sec - start.tv_sec) * 1000
+		+ ((double)(now.tv_usec - start.tv_usec) / 1000))));
 }
 
 void	eat(t_thread_info *info)
