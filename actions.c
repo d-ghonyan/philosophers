@@ -18,9 +18,9 @@ void	norm(t_timeval *start, t_timeval *meal)
 	gettimeofday(start, NULL);
 }
 
-double	another_gettime(t_timeval start, t_timeval now)
+int	another_gettime(t_timeval start, t_timeval now)
 {
-	return ((double)((now.tv_sec - start.tv_sec) * 1000
+	return (int)((double)((now.tv_sec - start.tv_sec) * 1000
 		+ ((double)(now.tv_usec - start.tv_usec) / 1000)));
 }
 
@@ -34,18 +34,17 @@ void	eat(t_thread_info *info)
 	pthread_mutex_lock(info->mutexes[1]);
 	gettimeofday(&(info->last_meal), NULL);
 	pthread_mutex_lock(&(info->print_mutex));
-	printf("%.3f : %d has taken a fork\n",
+	printf("%d : %d has taken a fork\n",
 		another_gettime(info->start, now), info->num);
-	printf("%.3f : %d has taken a fork\n",
+	printf("%d : %d has taken a fork\n",
 		gettime(info->start), info->num);
-	printf("%.3f : %d is eating\n",
+	printf("%d : %d is eating\n",
 		gettime(info->start), info->num);
 	gettimeofday(&(info->last_meal), NULL);
 	pthread_mutex_unlock(&(info->print_mutex));
 	gettimeofday(&start, NULL);
 	gettimeofday(&(info->last_meal), NULL);
-	while (gettime(start) < info->to_eat)
-		;
+	usleep(info->to_eat * 1000);
 	info->eat_count += (info->must_eat != -1);
 	pthread_mutex_unlock(info->mutexes[1]);
 	pthread_mutex_unlock(info->mutexes[0]);
@@ -53,17 +52,13 @@ void	eat(t_thread_info *info)
 
 void	_sleep(t_thread_info *info)
 {
-	t_timeval	start;
-
-	printf("%.3f : %d is sleeping\n",
+	printf("%d : %d is sleeping\n",
 		gettime(info->start), info->num);
-	gettimeofday(&start, NULL);
-	while (gettime(start) < info->to_sleep)
-		;
+	usleep(info->to_sleep * 1000);
 }
 
 void	think(t_thread_info *info)
 {
-	printf("%.3f : %d is thinking\n",
+	printf("%d : %d is thinking\n",
 		gettime(info->start), info->num);
 }

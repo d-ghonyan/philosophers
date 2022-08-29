@@ -18,8 +18,6 @@ void	*s(void *arg)
 
 	info = (t_thread_info *)arg;
 	gettimeofday(&(info->last_meal), NULL);
-	if (info->num % 2 == 0)
-		usleep(15000);
 	info->ready = 1;
 	while (1)
 	{
@@ -59,7 +57,7 @@ int	print(t_thread_info *threads, int i)
 		pthread_mutex_unlock(&(threads[i].print_mutex));
 		return (1);
 	}
-	printf("%.3f : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
+	printf("%d : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
 		gettime((threads + i)->start), (threads + i)->num);
 	pthread_mutex_unlock(&(threads[i].print_mutex));
 	return (0);

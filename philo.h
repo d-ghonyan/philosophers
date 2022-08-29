@@ -56,6 +56,6 @@ void	_sleep(t_thread_info *info);
 void	think(t_thread_info *info);
 void	still_norm(t_thread_info *threads, t_mutex *mutexes, int size, int i);
 void	mutex_init(t_mutex *m, t_mutex *(*mutexes)[2], int count, int n);
-double	gettime(struct timeval start);
+int		gettime(struct timeval start);
 void	one_fork(int to_die);
 #endif

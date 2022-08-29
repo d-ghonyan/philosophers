@@ -12,12 +12,17 @@
 
 #include "philo.h"
 
-double	gettime(t_timeval start)
+// void	_printf(int time, int num, char *action)
+// {
+	
+// }
+
+int	gettime(t_timeval start)
 {
 	t_timeval	now;
 
 	gettimeofday(&now, NULL);
-	return ((double)((now.tv_sec - start.tv_sec) * 1000)
+	return (int)((double)((now.tv_sec - start.tv_sec) * 1000)
 		+ ((double)(now.tv_usec - start.tv_usec) / 1000));
 }
 
@@ -50,6 +55,6 @@ void	one_fork(int to_die)
 	gettimeofday(&start, NULL);
 	while (gettime(start) <= to_die)
 		;
-	printf("%.3f : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
+	printf("%d : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
 		gettime(start), 0);
 }
