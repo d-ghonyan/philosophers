@@ -6,7 +6,7 @@
 /*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/08/28 17:03:40 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/09/02 14:10:10 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@ void	*s(void *arg)
 	t_thread_info	*info;
 
 	info = (t_thread_info *)arg;
+	while (*(info->can_start) != -1)
+		;
 	gettimeofday(&(info->last_meal), NULL);
+	info->start = info->last_meal;
 	info->ready = 1;
 	while (1)
 	{
@@ -46,19 +49,23 @@ int	im_tired(t_thread_info *threads, int size)
 	return (1);
 }
 
-int	print(t_thread_info *threads, int i)
+int	print(t_thread_info *threads, int i, int cond)
 {
 	t_timeval	now;
 
 	gettimeofday(&now, NULL);
 	pthread_mutex_lock(&(threads[i].print_mutex));
-	if (gettime(threads[i].last_meal) <= threads[i].to_die)
+	if (gettime(threads[i].last_meal) <= threads[i].to_die && !cond)
 	{
 		pthread_mutex_unlock(&(threads[i].print_mutex));
 		return (1);
 	}
-	printf("%d : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
-		gettime((threads + i)->start), (threads + i)->num);
+	if (!cond)
+		printf("%d : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
+			gettime((threads + i)->start), (threads + i)->num);
+	else
+		printf("%d : \x1b[35mProcess complete\n" RESET,
+			gettime((threads + i)->start));
 	pthread_mutex_unlock(&(threads[i].print_mutex));
 	return (0);
 }
@@ -77,11 +84,7 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 					&& gettime(threads[i].last_meal) > threads[i].to_die)
 				|| im_tired(threads, size))
 			{
-				if (!im_tired(threads, size))
-					if (print(threads, i))
-						continue ;
-				if (gettime(threads[i].last_meal) <= threads[i].to_die
-					&& !im_tired(threads, size))
+				if (print(threads, i, im_tired(threads, size)))
 					continue ;
 				a = -1;
 				while (++a < size)
@@ -94,7 +97,6 @@ int	loop(int size, t_thread_info *threads, t_mutex *mutexes)
 
 int	main(int argc, char **argv)
 {
-	t_timeval		start;
 	int				i;
 	t_thread_info	*threads;
 	t_mutex			*mutexes;
@@ -110,12 +112,12 @@ int	main(int argc, char **argv)
 		if (init_thread(threads, argc, argv, mutexes))
 			return (0);
 		i = -1;
-		gettimeofday(&start, NULL);
 		while (++i < ft_atoi(argv[1]))
 		{
-			threads[i].start = start;
+			threads[i].can_start = &i;
 			pthread_create((&((threads + i)->id)), NULL, &s, threads + i);
 		}
+		i = -1;
 		return (loop(ft_atoi(argv[1]), threads, mutexes));
 	}
 	one_fork(ft_atoi(argv[2]));

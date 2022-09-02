@@ -1,18 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dghonyan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/03/13 13:00:54 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:42:47 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	is_numeric(char *s);
+int	is_numeric(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] < '0' || s[i] > '9')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	check_args(int argc, char **argv)
 {
@@ -39,18 +51,4 @@ int	check_args(int argc, char **argv)
 		i++;
 	}
 	return (0);
-}
-
-static int	is_numeric(char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] < '0' || s[i] > '9')
-			return (0);
-		i++;
-	}
-	return (1);
 }

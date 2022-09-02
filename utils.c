@@ -6,7 +6,7 @@
 /*   By: dghonyan <dghonyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/13 12:16:00 by dghonyan          #+#    #+#             */
-/*   Updated: 2022/08/26 15:29:23 by dghonyan         ###   ########.fr       */
+/*   Updated: 2022/08/30 13:35:43 by dghonyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,7 @@ int	err(t_thread_info *threads, t_mutex *m)
 
 void	one_fork(int to_die)
 {
-	t_timeval	start;
-
-	gettimeofday(&start, NULL);
-	while (gettime(start) <= to_die)
-		;
+	usleep(to_die * 1000);
 	printf("%d : Philosopher %d is \x1b[31mDĘÃD\x1b[0m\n",
-		gettime(start), 0);
+		to_die, 0);
 }
